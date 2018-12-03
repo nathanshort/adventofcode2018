@@ -7,11 +7,7 @@ defmodule Aoc2 do
   
   def group_by_value( what ) do
     map = Enum.reduce( String.to_charlist( what ), %{}, fn( x, accum ) ->
-      if Map.has_key?( accum, x ) do
-	Map.put( accum, x, Map.get( accum, x ) + 1 )
-      else
-	Map.put( accum, x, 1 )
-      end
+      if Map.has_key?( accum, x ), do: Map.put( accum, x, Map.get( accum, x ) + 1 ), else: Map.put( accum, x, 1 )
     end )
     map
   end
@@ -22,11 +18,7 @@ defmodule Aoc2 do
 
     Enum.zip( String.to_charlist( string1 ), String.to_charlist( string2 ) ) |>
       Enum.reduce( 0, fn( element, accum ) ->
-	if( elem( element, 0 ) != elem( element, 1 ) ) do
-	  accum + 1 
-	else
-	  accum
-	end
+	if elem( element, 0 ) != elem( element, 1 ), do: accum + 1, else: accum
       end )
   end
 
@@ -40,11 +32,7 @@ defmodule Aoc2 do
     checksum = Enum.map( [2,3], fn( x ) ->
       Enum.reduce( by_values, 0, fn( map, accum ) ->
 	hasx = Enum.find_value( Map.to_list( map ), fn {_,v} -> v == x; end )
-	if hasx do
-	  accum + 1
-	else
-	  accum
-	end
+	if hasx, do: accum + 1, else: accum
       end )
     end
     ) |> Enum.reduce( fn( x, accum ) -> accum * x end )
@@ -76,12 +64,7 @@ defmodule Aoc2 do
       String.to_charlist( Enum.at( result, 0 ) ),
       String.to_charlist( Enum.at( result, 1 ) ) ) |>
       Enum.reduce( "", fn( element, accum ) ->
-	if( elem( element, 0 ) == elem( element, 1 ) ) do
-	  accum <> List.to_string( [ elem( element, 0 ) ] )
-	else
-	  accum
-	end
-	
+	if elem( element, 0 ) == elem( element, 1 ), do: accum <> List.to_string( [ elem( element, 0 ) ] ), else: accum
       end )
   end
 
