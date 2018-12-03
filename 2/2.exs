@@ -6,16 +6,14 @@ defmodule Aoc2 do
 
   
   def group_by_value( what ) do
-    map = Enum.reduce( String.to_charlist( what ), %{}, fn( x, accum ) ->
+    Enum.reduce( String.to_charlist( what ), %{}, fn( x, accum ) ->
       if Map.has_key?( accum, x ), do: Map.put( accum, x, Map.get( accum, x ) + 1 ), else: Map.put( accum, x, 1 )
     end )
-    map
   end
 
 
   # returns number of spots by which the strings differ
   def string_difference( string1, string2 ) do
-
     Enum.zip( String.to_charlist( string1 ), String.to_charlist( string2 ) ) |>
       Enum.reduce( 0, fn( element, accum ) ->
 	if elem( element, 0 ) != elem( element, 1 ), do: accum + 1, else: accum
@@ -29,7 +27,7 @@ defmodule Aoc2 do
     #by_values is list of map, ie [ { char1 => count, char2 => count }, {...}  ]
     by_values = Enum.map( Aoc2.get_data( file ), &Aoc2.group_by_value/1 ) 
 
-    checksum = Enum.map( [2,3], fn( x ) ->
+    Enum.map( [2,3], fn( x ) ->
       Enum.reduce( by_values, 0, fn( map, accum ) ->
 	hasx = Enum.find_value( Map.to_list( map ), fn {_,v} -> v == x; end )
 	if hasx, do: accum + 1, else: accum
@@ -37,7 +35,6 @@ defmodule Aoc2 do
     end
     ) |> Enum.reduce( fn( x, accum ) -> accum * x end )
 
-    checksum
   end
 
   
