@@ -24,10 +24,7 @@ defmodule Aoc3 do
       Enum.reduce(0..(String.to_integer(claim["height"]) - 1), accum, fn yoffset, accum ->
         y = ystart + yoffset
         key = "#{x},#{y}"
-
-        if Map.has_key?(accum, key),
-          do: Map.put(accum, key, Map.get(accum, key) + 1),
-          else: Map.put(accum, key, 1)
+	Map.update( accum, key, 1, &( &1 + 1 ) )
       end)
     end)
   end

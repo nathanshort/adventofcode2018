@@ -1,16 +1,16 @@
 defmodule Aoc4 do
   def get_ranges(row, accum) do
-    # accum is tuple of { current guard, last time, all_data }
+    # accum is tuple of { current guard, last time minutes, all_data }
     guard = elem(accum, 0)
     data = elem(accum, 2)
 
     if wake_match =
          Regex.named_captures(
-           ~r/^\[1518-(?<month>\d{2})-(?<day>\d{2}) (?<hh>\d{2}):(?<mm>\d{2})\] wakes/,
+           ~r/:(?<mm>\d{2})\] wakes/,
            row
          ) do
       last_time = elem(accum, 1)
-      range = String.to_integer(last_time["mm"])..(String.to_integer(wake_match["mm"]) - 1)
+      range = String.to_integer(last_time)..(String.to_integer(wake_match["mm"]) - 1)
 
       if Map.has_key?(data, guard) do
         {guard, nil, Map.put(data, guard, [range | Map.get(data, guard)])}
@@ -20,18 +20,17 @@ defmodule Aoc4 do
     else
       if begin_match =
            Regex.named_captures(
-             ~r/^\[1518-(?<month>\d{2})-(?<day>\d{2}) (?<hh>\d{2}):(?<mm>\d{2})\] Guard #(?<guard>.*) begins shift$/,
+             ~r/Guard #(?<guard>.*) begins/,
              row
            ) do
         {begin_match["guard"], nil, data}
       else
         sleep_match =
           Regex.named_captures(
-            ~r/^\[1518-(?<month>\d{2})-(?<day>\d{2}) (?<hh>\d{2}):(?<mm>\d{2})\] falls/,
+            ~r/:(?<mm>\d{2})\] falls/,
             row
           )
-
-        {guard, sleep_match, data}
+        {guard, sleep_match["mm"], data}
       end
     end
   end
@@ -68,11 +67,7 @@ defmodule Aoc4 do
     map_by_minute =
       Enum.reduce(Map.get(times, guard), %{}, fn range, accum ->
         Enum.reduce(range, accum, fn elem, accum ->
-          if Map.has_key?(accum, elem) do
-            Map.put(accum, elem, Map.get(accum, elem) + 1)
-          else
-            Map.put(accum, elem, 1)
-          end
+	  Map.update( accum, elem, 1, &( &1 + 1 ) )
         end)
       end)
 
@@ -89,11 +84,7 @@ defmodule Aoc4 do
   def max_min_per_guard(ranges) do
     Enum.reduce(ranges, %{}, fn range, accum ->
       Enum.reduce(range, accum, fn elem, accum ->
-        if Map.has_key?(accum, elem) do
-          Map.put(accum, elem, Map.get(accum, elem) + 1)
-        else
-          Map.put(accum, elem, 1)
-        end
+	Map.update( accum, elem, 1, &( &1 + 1 ) )	
       end)
     end)
     |> Enum.reduce({0, nil}, fn {k, v}, accum ->
